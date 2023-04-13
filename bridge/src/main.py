@@ -4,6 +4,7 @@ import uvicorn
 from resume.router import router as router_resume
 from auth.router import router as auth_router
 from profiler.router import router as prof_router
+from messages.router import router as message_router
 
 import logging
 from fastapi import FastAPI, Request, status
@@ -28,6 +29,10 @@ app.include_router(
 
 app.include_router(
     router=router_resume
+)
+
+app.include_router(
+     router=message_router
 )
 
 @app.exception_handler(RequestValidationError)

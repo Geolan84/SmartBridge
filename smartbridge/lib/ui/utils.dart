@@ -16,3 +16,8 @@ bool validatePassword(String password) {
       password.length > 5 &&
       !password.contains(' ');
 }
+
+String getStringDate(String utcDate) {
+  var castedDate = DateTime.parse(utcDate);
+  return "${castedDate.day}/${castedDate.month}/${castedDate.year}";
+}

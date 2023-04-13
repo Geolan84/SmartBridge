@@ -32,21 +32,9 @@ class MainScreenWidgetState extends State<HRMainScreenWidget> {
       body: IndexedStack(
         index: _selectedTab,
         children: [
-          const Scaffold(
-            body: Center(
-              child: Text("SEARCH"),
-            ),
-          ),
-          const Scaffold(
-            body: Center(
-              child: Text("FAVORITE"),
-            ),
-          ),
-          const Scaffold(
-            body: Center(
-              child: Text("PATTERNS"),
-            ),
-          ),
+          _screenFactory.makeSearchResume(),
+          _screenFactory.makeFavorite(),
+          _screenFactory.makeTemplatesList(),
           Scaffold(body: _screenFactory.makeSettings()),
         ],
       ),

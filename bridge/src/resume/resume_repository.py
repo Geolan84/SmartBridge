@@ -1,9 +1,9 @@
 from sqlalchemy import insert, select
-from models import resume, region, specialization
+from models import resume, region, specialization, favorites
 from datetime import datetime
 
 from sqlalchemy.ext.asyncio import AsyncSession
-from resume.schemas import ResumeCreate
+from resume.schemas import ResumeCreate, ResumeSearch
 
 class ResumeRepository:
     @staticmethod
@@ -26,3 +26,27 @@ class ResumeRepository:
         query = select(resume.join(region, resume.c.region == region.c.geo_id).join(specialization, resume.c.specialization == specialization.c.spec_id)).where(resume.c.resume_id == resume_id)
         result = await session.execute(query)
         return result.first()
+    
+    @staticmethod
+    async def delete_resume(resume_id: int, session: AsyncSession):
+        pass
+    
+    @staticmethod
+    async def search_ankets(session: AsyncSession):
+       query = select(resume.join(region, resume.c.region == region.c.geo_id).join(specialization, resume.c.specialization == specialization.c.spec_id))
+       result = await session.execute(query)
+       return result.all()
+    
+    @staticmethod
+    async def get_all_favorites(hr_id: int, session: AsyncSession):
+        query = select(resume.join(region, resume.c.region == region.c.geo_id).join(specialization, resume.c.specialization == specialization.c.spec_id).join(favorites, resume.c.resume_id == favorites.c.favorite_id and favorites.c.hr_id == hr_id))#.where(resume.c.hr_id == hr_id)
+        result = await session.execute(query)
+        return result.all()
+    
+    @staticmethod
+    async def add_favorite(hr_id: int, resume_id: int, session: AsyncSession):
+        stmt = insert(favorites).values(**{"hr_id": hr_id, "favorite_id": resume_id})
+        await session.execute(stmt)
+        await session.commit()
+
+    

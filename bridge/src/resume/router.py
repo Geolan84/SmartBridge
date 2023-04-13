@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, Security
 from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from database import get_async_session
-from resume.schemas import ResumeCreate
+from resume.schemas import ResumeCreate, ResumeSearch
 from fastapi.security import HTTPAuthorizationCredentials
-from resume.resume_repository import ResumeRepository #new_resume, get_resumes
+from resume.resume_repository import ResumeRepository
 from manager import read_token, bearer
 import json
 
@@ -81,33 +81,82 @@ async def update_resume(resume_id: int):
     pass
 
 @router.delete("/resume/{resume_id}")
-async def update_resume(resume_id: int):
-    pass
+async def remove_resume(resume_id: int, session: AsyncSession = Depends(get_async_session), token: HTTPAuthorizationCredentials = Security(bearer)):
+    info = read_token(token)
+    if info is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Not authorized"
+        )
+    if info[1]:
+        raise HTTPException(
+            status_code=403,
+            detail="You haven't rights to delete resume"
+        )
+    try:
+        await ResumeRepository.delete_resume()
+        return Response(status_code=200)
+    except Exception:
+        raise HTTPException(status_code=400)
 
-@router.get("/template")
-async def get_template():
-    pass
+@router.get("/search")
+async def search_resumes(session: AsyncSession = Depends(get_async_session), token: HTTPAuthorizationCredentials = Security(bearer)):
+    ##region: int, schedule: str, lower_salary: int, upper_salary: int, industry: str, specialization: int, experience_years : int, is_disabled: bool, employment: str, company_type: str, qualification: str, 
+    info = read_token(token)
+    if info is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Not authorized"
+        )
+    if not info[1]:
+        raise HTTPException(
+            status_code=403,
+            detail="You haven't rights to delete template"
+        )
+    result = await ResumeRepository.search_ankets(session)
+    return {"resumes": [x._mapping for x in result]}
 
-@router.post("/template")
-async def post_template():
-    pass
-
-@router.delete("/template/{template_id}")
-async def delete_template():
-    pass
-
-@router.patch("/template/{template_id}")
-async def delete_template():
-    pass
 
 @router.get("/favorite")
-async def get_favorites():
-    pass
+async def get_favorites(session: AsyncSession = Depends(get_async_session), token: HTTPAuthorizationCredentials = Security(bearer)):
+    info = read_token(token)
+    if info is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Not authorized"
+        )
+    if not info[1]:
+        raise HTTPException(
+            status_code=403,
+            detail="You haven't rights to read resume"
+        )
+    try:
+        result = await ResumeRepository.get_all_favorites(info[0], session)
+        return {"resumes": [x._mapping for x in result]}
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=400)
 
 @router.delete("/favorite/{resume_id}")
 async def delete_favorite():
     pass
 
 @router.post("/favorite/{resume_id}")
-async def add_favorite():
-    pass
+async def add_favorite(resume_id: int, session: AsyncSession = Depends(get_async_session), token: HTTPAuthorizationCredentials = Security(bearer)):
+    info = read_token(token)
+    if info is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Not authorized"
+        )
+    if not info[1]:
+        raise HTTPException(
+            status_code=403,
+            detail="You haven't rights to create resume"
+        )
+    try:
+        await ResumeRepository.add_favorite(info[0], resume_id, session)
+        return Response(status_code=201)
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=400)

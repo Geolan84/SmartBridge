@@ -77,24 +77,12 @@ class RegisterWidgetState extends State<RegisterWidget> {
 
   Widget buildRegisterButton(BuildContext context) {
     final model = context.watch<RegisterViewModel>();
-    //final model = context.watch<RegisterViewModel>();
-    // final onPressed = model.canStartAuth ? () => model.auth(context) : null;
-    // final child = model.isAuthProgress
-    //     ? const SizedBox(
-    //         width: 15,
-    //         height: 15,
-    //         child: CircularProgressIndicator(strokeWidth: 2),
-    //       )
-    //     : Text(LocaleSwitcher.of(context)!.signinbut);
-    // return ElevatedButton(
-    //   onPressed: onPressed,
-    //   child: child,
-    // );
+    
     return ElevatedButton(
       onPressed: () {
         model.register(context, selectedDate, _selections[1]);
       },
-      child: const Text("Register"),
+      child: const Text("Зарегистрироваться"),
     );
   }
 

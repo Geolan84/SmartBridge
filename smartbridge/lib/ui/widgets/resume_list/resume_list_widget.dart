@@ -97,22 +97,22 @@ class ResumeListState extends State<ResumeList> {
                                             fontWeight: FontWeight.bold),
                                       ),
                                       const SizedBox(height: 10),
-                                      Expanded(
-                                        child:
-                                            Text(snapshot.data![index].geoName),
+                                      SizedBox(
+                                        width: 200.0,
+                                        child: Text(
+                                          snapshot.data![index].geoName,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          softWrap: false,
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            //fontSize: 20.0
+                                          ),
+                                        ),
                                       ),
                                     ],
                                   ),
-                                  // Column(
-                                  //     mainAxisAlignment:
-                                  //         MainAxisAlignment.center,
-                                  //     crossAxisAlignment:
-                                  //         CrossAxisAlignment.center,
-                                  //     children: const [
-                                  //       Icon(
-                                  //         Icons.arrow_circle_right_rounded,
-                                  //       ),
-                                  //     ]),
                                 ],
                               ),
                             ),

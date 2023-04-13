@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
+import 'package:smartbridge/domain/models/template.dart';
 import 'package:smartbridge/domain/models/resume.dart';
 import 'dart:convert';
 import 'package:path/path.dart';
@@ -19,6 +20,50 @@ class ApiClientException implements Exception {
 class ApiClient {
   Future<List<Resume>> getResumes(String token) async {
     var url = Uri.http('10.0.2.2:8080', 'work/resumes');
+    try {
+      var response = await http.get(url, headers: {
+        "Authorization": "Bearer $token"
+      }).timeout(const Duration(seconds: 5));
+      if (response.statusCode == 200) {
+        var data = json.decode(utf8.decode(response.bodyBytes));
+        return Resume.getListFromJson(data);
+      } else if (response.statusCode == 400) {
+        throw ApiClientException(ApiClientExceptionType.auth);
+      }
+    } on TimeoutException {
+      throw ApiClientException(ApiClientExceptionType.noAnswer);
+    } on ApiClientException {
+      rethrow;
+    } catch (_) {
+      throw ApiClientException(ApiClientExceptionType.other);
+    }
+    return List<Resume>.empty();
+  }
+
+  Future<List<Resume>> getFavorites(String token) async {
+    var url = Uri.http('10.0.2.2:8080', 'work/favorite');
+    try {
+      var response = await http.get(url, headers: {
+        "Authorization": "Bearer $token"
+      }).timeout(const Duration(seconds: 5));
+      if (response.statusCode == 200) {
+        var data = json.decode(utf8.decode(response.bodyBytes));
+        return Resume.getListFromJson(data);
+      } else if (response.statusCode == 400) {
+        throw ApiClientException(ApiClientExceptionType.auth);
+      }
+    } on TimeoutException {
+      throw ApiClientException(ApiClientExceptionType.noAnswer);
+    } on ApiClientException {
+      rethrow;
+    } catch (_) {
+      throw ApiClientException(ApiClientExceptionType.other);
+    }
+    return List<Resume>.empty();
+  }
+
+  Future<List<Resume>> searchResumes(String token) async {
+    var url = Uri.http('10.0.2.2:8080', 'work/search');
     try {
       var response = await http.get(url, headers: {
         "Authorization": "Bearer $token"
@@ -221,5 +266,72 @@ class ApiClient {
       //print(e);
       throw ApiClientException(ApiClientExceptionType.other);
     }
+  }
+
+  Future<void> deleteTemplate(String token, int templateId) async{
+    var headers = {
+      'authorization': 'Bearer $token'
+    };
+    var url = Uri.http('10.0.2.2:8080', 'chat/template/$templateId');
+    try {
+      var response = await http
+          .delete(url, headers: headers)
+          .timeout(const Duration(seconds: 5));
+      if (response.statusCode != 200) {
+        throw ApiClientException(ApiClientExceptionType.auth);
+      }
+    } on TimeoutException {
+      throw ApiClientException(ApiClientExceptionType.noAnswer);
+    } on ApiClientException {
+      rethrow;
+    } catch (e) {
+      throw ApiClientException(ApiClientExceptionType.other);
+    }
+  }
+
+  Future<void> addNewTemplate(String token, String title, String message) async {
+    var headers = {
+      'Content-Type': 'application/json',
+      'authorization': 'Bearer $token'
+    };
+    var url = Uri.http('10.0.2.2:8080', 'chat/template');
+    try {
+      Map credantials = {"title": title, "body": message};
+      var body = json.encode(credantials);
+      var response = await http
+          .post(url, headers: headers, body: body)
+          .timeout(const Duration(seconds: 5));
+      if (response.statusCode != 201) {
+        throw ApiClientException(ApiClientExceptionType.auth);
+      }
+    } on TimeoutException {
+      throw ApiClientException(ApiClientExceptionType.noAnswer);
+    } on ApiClientException {
+      rethrow;
+    } catch (_) {
+      throw ApiClientException(ApiClientExceptionType.other);
+    }
+  }
+
+  Future<List<Template>> getTemplates(String token) async {
+    var url = Uri.http('10.0.2.2:8080', 'chat/template');
+    try {
+      var response = await http.get(url, headers: {
+        "Authorization": "Bearer $token"
+      }).timeout(const Duration(seconds: 5));
+      if (response.statusCode == 200) {
+        var data = json.decode(utf8.decode(response.bodyBytes));
+        return Template.getListFromJson(data);
+      } else if (response.statusCode == 400) {
+        throw ApiClientException(ApiClientExceptionType.auth);
+      }
+    } on TimeoutException {
+      throw ApiClientException(ApiClientExceptionType.noAnswer);
+    } on ApiClientException {
+      rethrow;
+    } catch (_) {
+      throw ApiClientException(ApiClientExceptionType.other);
+    }
+    return List<Template>.empty();
   }
 }

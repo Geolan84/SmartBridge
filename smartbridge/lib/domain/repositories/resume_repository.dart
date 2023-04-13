@@ -12,6 +12,18 @@ class ResumeRepository {
     return res;
   }
 
+  Future<List<Resume>> getFavoriteResumes() async{
+    var token = await _sessionDataProvider.getToken();
+    var res = await _apiClient.getFavorites(token!);
+    return res;
+  }
+
+  Future<List<Resume>> searchResumes() async{
+    var token = await _sessionDataProvider.getToken();
+    var res = await _apiClient.searchResumes(token!);
+    return res;
+  }
+
   Future<void> addNewResume(Resume newResume) async {
     var token = await _sessionDataProvider.getToken();
     _apiClient.addNewResume(token!, newResume.toJson());

@@ -33,8 +33,6 @@ class MainScreenWidgetState extends State<MainScreenWidget> {
         index: _selectedTab,
         children: [
           _screenFactory.makeResumeList(),
-          //const Scaffold(body: Center(child: Text("РЕЗЮМЕ"),),),
-          //const Scaffold(body: Center(child: Text("ЧАТ"),),),
           _screenFactory.makeSettings(),
         ],
       ),
@@ -49,11 +47,6 @@ class MainScreenWidgetState extends State<MainScreenWidget> {
             icon: const Icon(Icons.post_add),
             selectedColor: Colors.red,
           ),
-          // salomon.SalomonBottomBarItem(
-          //   title: Text(LocaleSwitcher.of(context)!.chat),
-          //   icon: const Icon(Icons.message),
-          //   selectedColor: Colors.red,
-          // ),
           salomon.SalomonBottomBarItem(
             title: Text(LocaleSwitcher.of(context)!.settings),
             icon: const Icon(Icons.settings),

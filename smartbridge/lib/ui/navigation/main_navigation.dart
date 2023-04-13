@@ -14,9 +14,8 @@ abstract class MainNavigationRouteNames {
   static const userAddResume = 'main_screen/add_resume';
   static const userResumeView = '/main_screen/resume';
   static const hrResumeView = '/hr_main_screen/resume';
-  //static const userResumeList = 'main'
-  //static const movieDetails = '/main_screen/movie_details';
-  //static const movieTrailerWidget = '/main_screen/movie_details/trailer';
+  static const hrResumeList = '/hr_main_screen/resume_list';
+  static const hrAddTemplate = '/hr_main_screen/add_template';
 }
 
 class MainNavigation {
@@ -46,37 +45,32 @@ class MainNavigation {
         return MaterialPageRoute(
           builder: (_) => _screenFactory.makeAddResume(),
         );
+      case MainNavigationRouteNames.hrAddTemplate:
+        return MaterialPageRoute(
+          builder: (_) => _screenFactory.makeAddTemplate(),
+        );
       case MainNavigationRouteNames.userResumeView:
         final arguments = settings.arguments;
-        //final resumeId = arguments is int ? arguments : 0;
         final resume = arguments is Resume ? arguments : null;
         return MaterialPageRoute(
           builder: (_) => _screenFactory.makeResumeView(resume),
+        );
+      case MainNavigationRouteNames.hrResumeList:
+        final arguments = settings.arguments;
+        final resume = arguments is List<Resume> ? arguments : List<Resume>.empty();
+        return MaterialPageRoute(
+          builder: (_) => _screenFactory.makeResumesListHr(resume),
         );
       case MainNavigationRouteNames.hrResumeView:
         final arguments = settings.arguments;
         final resume = arguments is Resume ? arguments : null;
-        //final resumeId = arguments is int ? arguments : 0;
         return MaterialPageRoute(
-          //builder: (_) => _screenFactory.makeResumeView(resumeId),
           builder: (_) => _screenFactory.makeResumeView(resume),
         );
+      
       default:
         const widget = Text('Navigation error!!!');
         return MaterialPageRoute(builder: (_) => widget);
-
-      // case MainNavigationRouteNames.movieDetails:
-      //   final arguments = settings.arguments;
-      //   final movieId = arguments is int ? arguments : 0;
-      //   return MaterialPageRoute(
-      //     builder: (_) => _screenFactory.makeMovieDetails(movieId),
-      //   );
-      // case MainNavigationRouteNames.movieTrailerWidget:
-      //   final arguments = settings.arguments;
-      //   final youtubeKey = arguments is String ? arguments : '';
-      //   return MaterialPageRoute(
-      //     builder: (_) => _screenFactory.makeMovieTrailer(youtubeKey),
-      //   );
     }
   }
 

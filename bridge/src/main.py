@@ -43,4 +43,4 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 	return JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8080, log_level="info", reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=81, log_level="info", reload=True)

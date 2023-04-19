@@ -27,30 +27,18 @@ class SearchViewModel extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   Future<String?> _search() async {
-    // 0,
-    // 0,
-    // schedule,
-    // lowerSalary,
-    // upperSalary,
-    // industry,
-    // experienceYears,
-    // isDisabled,
-    // employment,
-    // companyType,
-    // qualification,
-    // true,
-    // 'updatedAt',
-    // 'geoName',
-    // 'specName',
-    // regionId,
-    // specId,
     try {
       search_res = await _resumeService.searchResumes();
+      search_res = search_res.where((element) => element.lowerSalary > lowerSalary && element.upperSalary < upperSalary).toList();
+      search_res = search_res.where((element) => element.isDisabled == isDisabled).toList();
       if(industry != "---"){
         search_res = search_res.where((element) => element.industry == industry).toList();
       }
       if(companyType != "---"){
         search_res = search_res.where((element) => element.companyType == companyType).toList();
+      }
+      if(regionId != -1){
+        search_res = search_res.where((element) => element.region == regionId).toList();
       }
       if(schedule != '---'){
         search_res = search_res.where((element) => element.schedule == schedule).toList();
@@ -65,7 +53,6 @@ class SearchViewModel extends ChangeNotifier {
     } on ApiClientException catch (e) {
       switch (e.type) {
         case ApiClientExceptionType.network:
-          //return LocaleSwitcher.of(_context!)!.networkerror;
           return "Ошибка сети!";
         case ApiClientExceptionType.auth:
           return "Ошибка входа!";
@@ -73,12 +60,9 @@ class SearchViewModel extends ChangeNotifier {
           return "Ошибка сервера!";
         case ApiClientExceptionType.sessionExpired:
         case ApiClientExceptionType.other:
-          return "Неизвестная шибка!";
+          return "Неизвестная ошибка!";
       }
     }
-    // } catch (e) {
-    //   return LocaleSwitcher.of(_context!)!.defaulterror;
-    // }
     return null;
   }
 
@@ -142,14 +126,18 @@ class SearchViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> onIncrementLowerButtonPressed() async {
-    lowerSalary += 5000;
-    notifyListeners();
+Future<void> onIncrementLowerButtonPressed() async {
+    if(lowerSalary < upperSalary){
+        lowerSalary += 5000;
+        notifyListeners();
+    }
   }
 
   Future<void> onDecrementLowerButtonPressed() async {
-    lowerSalary -= 5000;
-    notifyListeners();
+    if(lowerSalary > 5000){
+      lowerSalary -= 5000;
+      notifyListeners();
+    }
   }
 
   Future<void> onIncrementUpperButtonPressed() async {
@@ -158,8 +146,10 @@ class SearchViewModel extends ChangeNotifier {
   }
 
   Future<void> onDecrementUpperButtonPressed() async {
-    upperSalary -= 5000;
-    notifyListeners();
+    if(upperSalary > 5000 && upperSalary > lowerSalary){
+      upperSalary -= 5000;
+      notifyListeners();
+    }
   }
 
   List<String> qualifications = const [

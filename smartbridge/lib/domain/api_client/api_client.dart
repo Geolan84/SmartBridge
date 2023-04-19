@@ -18,8 +18,12 @@ class ApiClientException implements Exception {
 }
 
 class ApiClient {
+
+  //static const hostLink = 'smartbridge.onrender.com';
+  static const hostLink = '10.0.2.2:8080';
+
   Future<List<Resume>> getResumes(String token) async {
-    var url = Uri.http('10.0.2.2:8080', 'work/resumes');
+    var url = Uri.http(hostLink, 'work/resume');
     try {
       var response = await http.get(url, headers: {
         "Authorization": "Bearer $token"
@@ -41,7 +45,7 @@ class ApiClient {
   }
 
   Future<List<Resume>> getFavorites(String token) async {
-    var url = Uri.http('10.0.2.2:8080', 'work/favorite');
+    var url = Uri.http(hostLink, 'work/favorite');
     try {
       var response = await http.get(url, headers: {
         "Authorization": "Bearer $token"
@@ -63,7 +67,7 @@ class ApiClient {
   }
 
   Future<List<Resume>> searchResumes(String token) async {
-    var url = Uri.http('10.0.2.2:8080', 'work/search');
+    var url = Uri.http(hostLink, 'work/search');
     try {
       var response = await http.get(url, headers: {
         "Authorization": "Bearer $token"
@@ -89,7 +93,7 @@ class ApiClient {
     required String password,
   }) async {
     var result = <String, dynamic>{};
-    var url = Uri.http('10.0.2.2:8080', 'auth/login');
+    var url = Uri.http(hostLink, 'auth/login');
     Map credantials = {
       'email': email,
       'password': (sha224.convert(utf8.encode(password))).toString()
@@ -121,7 +125,7 @@ class ApiClient {
 
   Future<void> resetPassword(String email) async {
     final Map<String, dynamic> credantials = {'email': email};
-    var url = Uri.http('10.0.2.2:8080', 'auth/forgot', credantials);
+    var url = Uri.http(hostLink, 'auth/forgot', credantials);
 
     try {
       var response = await http.post(url).timeout(
@@ -147,7 +151,7 @@ class ApiClient {
       String? patronymic,
       DateTime birthday,
       bool isHR) async {
-    var url = Uri.http('10.0.2.2:8080', 'auth/register');
+    var url = Uri.http(hostLink, 'auth/register');
     Map credantials = {
       'email': email,
       'hashed_password': (sha224.convert(utf8.encode(password))).toString(),
@@ -185,7 +189,7 @@ class ApiClient {
     var headers = {
       'authorization': 'Bearer $token'
     };
-    var url = Uri.http('10.0.2.2:8080', 'profile/$userId');
+    var url = Uri.http(hostLink, 'profile/$userId');
     try {
       var response = await http
           .delete(url, headers: headers)
@@ -210,7 +214,7 @@ class ApiClient {
       "Accept": "application/json",
       "authorization": "Bearer $token"
     };
-    var uri = Uri.http('10.0.2.2:8080', 'profile/photo/$userId');
+    var uri = Uri.http(hostLink, 'profile/photo/$userId');
 
     var request = http.MultipartRequest("POST", uri);
     var nameFile = basename(file.path);
@@ -224,7 +228,7 @@ class ApiClient {
   }
 
   Future<Resume> getResumeById(int resumeId, String token) async{
-    var url = Uri.http('10.0.2.2:8080', 'work/resume/$resumeId');
+    var url = Uri.http(hostLink, 'work/resume/$resumeId');
     try {
       var response = await http.get(url, headers: {
         "Authorization": "Bearer $token"
@@ -250,7 +254,7 @@ class ApiClient {
       'Content-Type': 'application/json',
       'authorization': 'Bearer $token'
     };
-    var url = Uri.http('10.0.2.2:8080', 'work/resume');
+    var url = Uri.http(hostLink, 'work/resume');
     try {
       var response = await http
           .post(url, headers: headers, body: jsonEncode(newResumeDict))
@@ -263,7 +267,6 @@ class ApiClient {
     } on ApiClientException {
       rethrow;
     } catch (_) {
-      //print(e);
       throw ApiClientException(ApiClientExceptionType.other);
     }
   }
@@ -272,7 +275,50 @@ class ApiClient {
     var headers = {
       'authorization': 'Bearer $token'
     };
-    var url = Uri.http('10.0.2.2:8080', 'chat/template/$templateId');
+    var url = Uri.http(hostLink, 'chat/template/$templateId');
+    try {
+      var response = await http
+          .delete(url, headers: headers)
+          .timeout(const Duration(seconds: 5));
+      if (response.statusCode != 200) {
+        throw ApiClientException(ApiClientExceptionType.auth);
+      }
+    } on TimeoutException {
+      throw ApiClientException(ApiClientExceptionType.noAnswer);
+    } on ApiClientException {
+      rethrow;
+    } catch (e) {
+      throw ApiClientException(ApiClientExceptionType.other);
+    }
+  }
+
+  Future<void> addNewFavorite(String token, int resumeId) async{
+      var headers = {
+      'Content-Type': 'application/json',
+      'authorization': 'Bearer $token'
+    };
+    var url = Uri.http(hostLink, 'work/favorite/$resumeId');
+    try {
+      var response = await http
+          .post(url, headers: headers)
+          .timeout(const Duration(seconds: 5));
+      if (response.statusCode != 201) {
+        throw ApiClientException(ApiClientExceptionType.auth);
+      }
+    } on TimeoutException {
+      throw ApiClientException(ApiClientExceptionType.noAnswer);
+    } on ApiClientException {
+      rethrow;
+    } catch (_) {
+      throw ApiClientException(ApiClientExceptionType.other);
+    }
+  }
+
+    Future<void> removeFavorite(String token, int resumeId) async{
+    var headers = {
+      'authorization': 'Bearer $token'
+    };
+    var url = Uri.http(hostLink, 'work/favorite/$resumeId');
     try {
       var response = await http
           .delete(url, headers: headers)
@@ -294,7 +340,7 @@ class ApiClient {
       'Content-Type': 'application/json',
       'authorization': 'Bearer $token'
     };
-    var url = Uri.http('10.0.2.2:8080', 'chat/template');
+    var url = Uri.http(hostLink, 'chat/template');
     try {
       Map credantials = {"title": title, "body": message};
       var body = json.encode(credantials);
@@ -314,7 +360,7 @@ class ApiClient {
   }
 
   Future<List<Template>> getTemplates(String token) async {
-    var url = Uri.http('10.0.2.2:8080', 'chat/template');
+    var url = Uri.http(hostLink, 'chat/template');
     try {
       var response = await http.get(url, headers: {
         "Authorization": "Bearer $token"

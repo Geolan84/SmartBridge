@@ -19,46 +19,36 @@ user = Table(
     Column("registered_at", TIMESTAMP, default=datetime.utcnow),
     Column("is_verified", Boolean, default=False, nullable=False)
 )
-
-# Город проживания.
 region = Table(
     "region",
     metadata,
     Column("geo_id", Integer, primary_key=True, autoincrement=True),
     Column("geoname", String(100), nullable=False)
 )
-
-# Ключевые навыки.
 know_skills = Table(
     "know_skills",
     metadata,
     Column("resume", Integer, ForeignKey("resume.resume_id", ondelete='CASCADE')),
     Column("skill", Integer, ForeignKey("skills.skill_id"))
 )
-
-# Специализация
 specialization = Table(
     "specialization",
     metadata,
     Column("spec_id", Integer, primary_key=True, autoincrement=True),
     Column("spec_name", String, nullable=False)
 )
-
-# Skills
 skills = Table(
     "skills",
     metadata,
     Column("skill_id", Integer, primary_key=True, autoincrement=True),
     Column("skill_name", String, nullable=False)
 )
-
 favorites = Table(
     "favorites",
     metadata,
     Column("hr_id", Integer, ForeignKey("users.user_id", ondelete='CASCADE'), nullable=False),
     Column("favorite_id", Integer, ForeignKey("resume.resume_id", ondelete='CASCADE'), nullable=False)
 )
-
 message_templates = Table(
     "msg_templates",
     metadata,
@@ -67,8 +57,6 @@ message_templates = Table(
     Column("title", String, nullable=False),
     Column("body", String, nullable=False)
 )
-
-# Анкета.
 resume = Table(
     "resume",
     metadata,

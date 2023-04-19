@@ -17,11 +17,10 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  File? _image;
 
   @override
   Widget build(BuildContext context) {
-    //final model = context.read<SettingsViewModel>();
+    final model = context.watch<SettingsViewModel>();
     return Column(children: [
       Center(
         child: Padding(
@@ -33,11 +32,7 @@ class _SettingsPageState extends State<SettingsPage> {
             child: CircleAvatar(
               minRadius: 50,
               maxRadius: 75,
-              backgroundImage: (_image != null)
-                  ? Image.file(_image!).image
-                  : Image.asset(
-                      "assets/images/avatar.jpg",
-                    ).image,
+              backgroundImage: model.avatar.image,
             ),
           ),
         ),
@@ -157,12 +152,7 @@ class _SettingsPageState extends State<SettingsPage> {
     final ImagePicker picker = ImagePicker();
     final img = await picker.pickImage(source: ImageSource.gallery);
     final model = context.read<SettingsViewModel>();
-    print(await model.uploadPhoto(img));
-    if (img != null) {
-      setState(() {
-        _image = File(img.path);
-      });
-    }
+    await model.uploadPhoto(img);
   }
 }
 

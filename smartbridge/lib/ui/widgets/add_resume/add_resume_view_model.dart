@@ -67,6 +67,10 @@ class AddResumeViewModel extends ChangeNotifier {
         'specName',
         regionId,
         specId,
+        'name',
+        'surname',
+        'patronymic',
+        'email'
       );
       await _resumeService.addNewResume(newResume);
     } on ApiClientException catch (e) {
@@ -89,73 +93,73 @@ class AddResumeViewModel extends ChangeNotifier {
   }
 
   Future<void> saveResume(BuildContext context) async {
-    // final phone = phoneInputController.text;
-    // final telegram = telegramInputController.text;
-    // final about = aboutInputController.text;
-    // final experience = experienceInputController.text;
-    // final education = educationInputController.text;
+    final phone = phoneInputController.text;
+    final telegram = telegramInputController.text;
+    final about = aboutInputController.text;
+    final experience = experienceInputController.text;
+    final education = educationInputController.text;
 
-    // if (false) {
-    //   if (regionId == -1) {
-    //     _updateState('Выберите регион', false);
-    //     return;
-    //   }
-    //   if (specId == -1) {
-    //     _updateState('Выберите специализацию', false);
-    //     return;
-    //   }
-    //   if (schedule == "---") {
-    //     _updateState('Укажите график работы', false);
-    //     return;
-    //   }
-    //   if (industry == "---") {
-    //     _updateState('Выберите индустрию', false);
-    //     return;
-    //   }
-    //   if (companyType == "---") {
-    //     _updateState('Выберите тип компании', false);
-    //     return;
-    //   }
-    //   if (qualification == "---") {
-    //     _updateState('Укажите квалификацию', false);
-    //     return;
-    //   }
-    //   if (employment == "---") {
-    //     _updateState('Выберите тип трудоустройства', false);
-    //     return;
-    //   }
-    //   if (about.isEmpty) {
-    //     _updateState('Заполните поле "О себе"', false);
-    //     return;
-    //   }
-    //   if (phone.isNotEmpty && phone.length != 11) {
-    //     _updateState('Некорректный номер телефона', false);
-    //     return;
-    //   }
-    //   if (telegram.isNotEmpty &&
-    //       (telegram.length < 6 || telegram.length > 33 || telegram[0] != '@')) {
-    //     _updateState('Некорректный telegram', false);
-    //     return;
-    //   }
-    //   if (experience.isEmpty) {
-    //     _updateState('Заполните поле "Опыт"', false);
-    //     return;
-    //   }
-    //   if (education.isEmpty) {
-    //     _updateState('Заполните поле "Образование"', false);
-    //     return;
-    //   }
-    // }
+
+    if (regionId == -1) {
+      _updateState('Выберите регион', false);
+      return;
+    }
+    if (specId == -1) {
+      _updateState('Выберите специализацию', false);
+      return;
+    }
+    if (schedule == "---") {
+      _updateState('Укажите график работы', false);
+      return;
+    }
+    if (industry == "---") {
+      _updateState('Выберите индустрию', false);
+      return;
+    }
+    if (companyType == "---") {
+      _updateState('Выберите тип компании', false);
+      return;
+    }
+    if (qualification == "---") {
+      _updateState('Укажите квалификацию', false);
+      return;
+    }
+    if (employment == "---") {
+      _updateState('Выберите тип трудоустройства', false);
+      return;
+    }
+    if (about.isEmpty) {
+      _updateState('Заполните поле "О себе"', false);
+      return;
+    }
+    if (phone.isNotEmpty && (phone.length != 11 || phone[0] != '7')) {
+      _updateState('Некорректный номер телефона', false);
+      return;
+    }
+    if (telegram.isNotEmpty &&
+        (telegram.length < 6 || telegram.length > 33 || telegram[0] != '@')) {
+      _updateState('Некорректный telegram', false);
+      return;
+    }
+    if (experience.isEmpty) {
+      _updateState('Заполните поле "Опыт"', false);
+      return;
+    }
+    if (education.isEmpty) {
+      _updateState('Заполните поле "Образование"', false);
+      return;
+    }
+    if (upperSalary < lowerSalary) {
+      _updateState('Верхний порог зарплаты не может быть меньше нижнего!', false);
+      return;
+    }
 
     _context = context;
     _updateState(null, true);
     _errorMessage = await _addResumeToServer();
 
     if (_errorMessage == null) {
-      //Navigator
-      //print("Sended!");
       Navigator.of(context).pop();
-      //MainNavigation.resetNavigation(context);
     } else {
       _updateState(_errorMessage, false);
     }
@@ -211,13 +215,17 @@ class AddResumeViewModel extends ChangeNotifier {
   }
 
   Future<void> onIncrementLowerButtonPressed() async {
-    lowerSalary += 5000;
-    notifyListeners();
+    if(lowerSalary < upperSalary){
+        lowerSalary += 5000;
+        notifyListeners();
+    }
   }
 
   Future<void> onDecrementLowerButtonPressed() async {
-    lowerSalary -= 5000;
-    notifyListeners();
+    if(lowerSalary > 5000){
+      lowerSalary -= 5000;
+      notifyListeners();
+    }
   }
 
   Future<void> onIncrementUpperButtonPressed() async {
@@ -226,8 +234,10 @@ class AddResumeViewModel extends ChangeNotifier {
   }
 
   Future<void> onDecrementUpperButtonPressed() async {
-    upperSalary -= 5000;
-    notifyListeners();
+    if(upperSalary > 5000 && upperSalary > lowerSalary){
+      upperSalary -= 5000;
+      notifyListeners();
+    }
   }
 
   List<String> qualifications = const [

@@ -21,6 +21,10 @@ class Resume {
   final String specName;
   final int region;
   final int specialization;
+  final String name;
+  final String surname;
+  final String? patronymic;
+  final String email;
 
   Resume(
       this.resumeID,
@@ -44,7 +48,11 @@ class Resume {
       this.geoName,
       this.specName,
       this.region,
-      this.specialization
+      this.specialization,
+      this.name,
+      this.surname,
+      this.patronymic,
+      this.email
       );
 
   factory Resume.fromJson(Map<String, dynamic> json) {
@@ -70,7 +78,11 @@ class Resume {
       json['geoname'],
       json['spec_name'],
       json['region'],
-      json['specialization']
+      json['specialization'],
+      json['first_name'],
+      json['second_name'],
+      json['patronymic'],
+      json['email']
     );
   }
 
@@ -92,6 +104,10 @@ class Resume {
       'is_active': isActive,
       'region': region,
       'specialization': specialization,
+      'first_name': name,
+      'second_name': surname,
+      'patronymic': patronymic,
+      'email': email
       };
 
   static List<Resume> getListFromJson(Map<String, dynamic> json) {

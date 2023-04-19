@@ -17,29 +17,29 @@ class SearchWidget extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
+            children: const [
               Padding(padding: EdgeInsets.only(bottom: 50, top: 40), child: Text("Найти соискателя", textAlign: TextAlign.center, style: TextStyle(fontSize: 30),),),
-              const RegionWidget(),
-              const SizedBox(height: 15),
-              const SpecializationWidget(),
-              const SizedBox(height: 15),
-              const QualificationWidget(),
-              const SizedBox(height: 15),
-              const ScheduleWidget(),
-              const SizedBox(height: 15),
-              const IndustryWidget(),
-              const SizedBox(height: 15),
-              const CompanyTypeWidget(),
-              const SizedBox(height: 15),
-              const EmploymentWidget(),
-              const SizedBox(height: 15),
-              const SkillsWidget(),
-              const SizedBox(height: 15),
-              const SalaryWidget(),
-              const SizedBox(height: 15),
-              const DisabledWidget(),
-              const _ErrorMessageWidget(),
-              const _SaveButton(),
+              RegionWidget(),
+              SizedBox(height: 15),
+              SpecializationWidget(),
+              SizedBox(height: 15),
+              QualificationWidget(),
+              SizedBox(height: 15),
+              ScheduleWidget(),
+              SizedBox(height: 15),
+              IndustryWidget(),
+              SizedBox(height: 15),
+              CompanyTypeWidget(),
+              SizedBox(height: 15),
+              EmploymentWidget(),
+              SizedBox(height: 15),
+              SkillsWidget(),
+              SizedBox(height: 15),
+              SalaryWidget(),
+              SizedBox(height: 15),
+              DisabledWidget(),
+              _ErrorMessageWidget(),
+              _SaveButton(),
             ],
           ),
         ),
@@ -263,7 +263,7 @@ class DisabledWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.read<SearchViewModel>();
+    final viewModel = context.watch<SearchViewModel>();
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [

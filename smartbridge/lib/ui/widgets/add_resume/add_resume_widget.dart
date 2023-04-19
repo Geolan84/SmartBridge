@@ -297,7 +297,7 @@ class DisabledWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.read<AddResumeViewModel>();
+    final viewModel = context.watch<AddResumeViewModel>();
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -461,9 +461,10 @@ class PhoneField extends StatelessWidget {
         enabledBorder:
             OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
+      keyboardType: TextInputType.number,
       validator: (val) {
-        if (val != null && val.isNotEmpty && val.length != 11) {
-          return LocaleSwitcher.of(context)!.toolong;
+        if (val != null && val.isNotEmpty && (val.length != 11 || val[0] != '7')) {
+          return "Некорректный номер телефона!";
         }
         return null;
       },
@@ -491,8 +492,8 @@ class TelegramField extends StatelessWidget {
       validator: (val) {
         if (val != null &&
             val.isNotEmpty &&
-            (val.length > 33 || val.length < 6)) {
-          return LocaleSwitcher.of(context)!.toolong;
+            (val.length > 33 || val.length < 6 || val[0] != "@")) {
+          return "Некорректный ник telegram!";
         }
         return null;
       },

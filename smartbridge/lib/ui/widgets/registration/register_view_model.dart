@@ -94,7 +94,7 @@ class RegisterViewModel extends ChangeNotifier {
 
     if (_errorMessage == null) {
       try {
-        _authService.login(email, password);
+        await _authService.login(email, password);
         MainNavigation.resetNavigation(context);
       } catch (e) {
         //print(e);

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:smartbridge/domain/repositories/auth_repository.dart';
+import 'package:smartbridge/domain/repositories/resume_repository.dart';
 //import 'package:smartbridge/domain/data_providers/session_data_provider.dart';
 import 'package:smartbridge/domain/models/resume.dart';
 
 
 class ResumeViewModel extends ChangeNotifier{
-  //final _sRepository = ResumeRepository();
+  final _resumeRepository = ResumeRepository();
   final _authRepository = AuthRepository();
 
   int resumeId = -1;
@@ -23,8 +24,18 @@ class ResumeViewModel extends ChangeNotifier{
 
   Future<void> downloadPhoto(int userId) async{
     avatar = Image.network('http://10.0.2.2:8080/profile/photo/$userId');
+    //avatar = Image.network('https://smartbridge.onrender.com/profile/photo/$userId');
     //_isDownloadProgress = false;
     notifyListeners();
+  }
+
+  Future<void> changeFavorite() async{
+    if(resume != null){
+      bool success = await _resumeRepository.addFavorite(resume!.resumeID);
+      if(!success){
+        await _resumeRepository.removeFavorite(resume!.resumeID);
+      }
+    }
   }
 
 

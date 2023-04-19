@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:smartbridge/domain/data_providers/session_data_provider.dart';
 import 'package:smartbridge/domain/repositories/profile_repository.dart';
 import 'package:smartbridge/domain/repositories/auth_repository.dart';
 import 'package:smartbridge/domain/api_client/api_client.dart';
@@ -12,11 +13,24 @@ import 'dart:io';
 
 class SettingsViewModel extends ChangeNotifier{
   final _profileRepository = ProfileRepository();
-   final _authService = AuthRepository();
+  final _authService = AuthRepository();
+  //File? _image;
+  Image avatar = Image.asset("assets/images/avatar.jpg");
                     
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
-  //BuildContext? _context;
+
+  SettingsViewModel(){
+    downloadPhoto();
+    notifyListeners();
+  }
+  
+  Future<void> downloadPhoto() async{
+    var userId = await SessionDataProvider().getUserId();
+    avatar = Image.network('http://10.0.2.2:8080/profile/photo/$userId');
+    //avatar = Image.network('https://smartbridge.onrender.com/profile/photo/$userId');
+    notifyListeners();
+  }
 
   Future<String?> _deleteProfile() async{
     try{
@@ -50,15 +64,15 @@ class SettingsViewModel extends ChangeNotifier{
     File file = File(image.path);
     try{
        await _profileRepository.uploadImage(file);
-    } catch(e){
-      print(e);
+       avatar = Image.file(File(file.path));
+       notifyListeners();
+    } catch(_){
       return false;
     }
     return true;
   }
 
   Future<void> deleteProfile(BuildContext context) async {
-    //_context = context;
     _errorMessage = await _deleteProfile();
     if (_errorMessage == null) {
       _authService.logout();

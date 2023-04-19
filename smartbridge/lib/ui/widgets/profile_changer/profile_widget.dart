@@ -17,7 +17,6 @@ class ProfileWidgetState extends State<ProfileWidget> {
 
   @override
   void initState(){
-    print("InitState!");
     super.initState();
     Future.delayed(Duration.zero,() {
       initFields(context);

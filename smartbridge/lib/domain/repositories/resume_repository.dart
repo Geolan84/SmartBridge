@@ -6,6 +6,26 @@ class ResumeRepository {
   final _apiClient = ApiClient();
   final _sessionDataProvider = SessionDataProvider();
 
+  Future<bool> addFavorite(int resumeID) async{
+    var token = await _sessionDataProvider.getToken();
+    try{
+      await _apiClient.addNewFavorite(token!, resumeID);
+    } catch(_){
+      return false;
+    }
+    return true;
+  }
+
+    Future<bool> removeFavorite(int resumeID) async{
+    var token = await _sessionDataProvider.getToken();
+    try{
+      await _apiClient.removeFavorite(token!, resumeID);
+    } catch(_){
+      return false;
+    }
+    return true;
+  }
+
   Future<List<Resume>> getResumes() async {
     var token = await _sessionDataProvider.getToken();
     var res = await _apiClient.getResumes(token!);
